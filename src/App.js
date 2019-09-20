@@ -81,7 +81,7 @@ class App extends Component {
             id="country"
             placeholder="Enter country"
           />
-          <button class="btn btn-success" onClick={this.handleSubmit}>
+          <button className="btn btn-success" onClick={this.handleSubmit}>
             Get Details
           </button>
         </form>
