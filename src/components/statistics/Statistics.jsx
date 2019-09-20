@@ -1,25 +1,34 @@
 import React, { Component } from "react";
-import "./App.css";
-import DataTracker from "./components/data-tracker/DataTracker";
-import Navbar from "./components/navbar/Navbar";
-import { supportsHistory } from "history/DOMUtils";
+import "./Statistics.css";
+import DataTracker from "../data-tracker/DataTracker";
+import Navbar from "../navbar/Navbar";
 
-class App extends Component {
+class Statistics extends Component {
   constructor(props) {
     super(props);
     this.state = {
       city: "",
       country: "",
-      temp: "",
-      humidity: ""
+      dayTemp: [],
+      nightTemp: [],
+      morningTemp: [],
+      humidity: []
     };
     this.flag = false;
   }
 
   weatherDataFormatter = data => {
     const state = { ...this.state };
-    state.temp = data.main.temp;
-    state.humidity = data.main.humidity;
+    for (let obj of data) {
+      const time = this.timeExtractor(obj["dt_txt"]);
+      const data = obj["main"];
+      if (data) {
+        if (time >= 6 && time < 9) state.morningTemp.push(data["temp"]);
+        else if (time >= 9 && time < 21) state.dayTemp.push(data["temp"]);
+        else state.nightTemp.push(data["temp"]);
+        state.humidity.push(data["humidity"]);
+      }
+    }
     this.setState(state);
   };
 
@@ -42,7 +51,7 @@ class App extends Component {
     debugger;
     const apiId = "94b2a14e27a66b598de4cd629dbfadab";
     const url =
-      "https://api.openweathermap.org/data/2.5/weather?q=" +
+      "https://api.openweathermap.org/data/2.5/forecast?q=" +
       this.state.city +
       "," +
       this.state.country +
@@ -52,12 +61,14 @@ class App extends Component {
       .then(res => res.json())
       .then(result => {
         this.flag = true;
-        this.weatherDataFormatter(result);
+        this.weatherDataFormatter(result["list"]);
       });
   };
   render() {
     const dataForTrack = [
-      { key: this.state.temp, type: "Temperature" },
+      { key: this.state.dayTemp, type: "Day Temperature" },
+      { key: this.state.nightTemp, type: "Night Temperature" },
+      { key: this.state.morningTemp, type: "Morning Temperature" },
       { key: this.state.humidity, type: "Humidity" }
     ];
     return (
@@ -74,17 +85,16 @@ class App extends Component {
             Get Details
           </button>
         </form>
-        {this.flag &&
-          dataForTrack.map(i => {
-            return (
-              <div className="data">
-                {i.type} : {i.key}
-              </div>
-            );
-          })}
+        <div className="forecast">
+          {this.state.city &&
+            this.flag &&
+            dataForTrack.map(i => {
+              return <DataTracker key={i.key} values={i.key} type={i.type} />;
+            })}
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+export default Statistics;
