@@ -1,7 +1,14 @@
-.dataType {
-    background: yellow;
+.data {
+  background-color: #dfe4e5;
+  margin: 5px;
+  font-size: 1.1rem;
+  border-radius: 25%;
 }
 
-.data {
-    background: lightgrey;
+.dataType {
+  border: 2px outset#DFE4E5;
+  background-color: #aaccd2;
+  border-radius: 5%;
+  margin: 5px 10px;
+  font-size: 1.3rem;
 }

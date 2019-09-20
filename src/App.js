@@ -75,15 +75,23 @@ class App extends Component {
       <div className="App">
         <Navbar />
         <form>
-          <input id="city" placeholder="Enter city" />
-          <input id="country" placeholder="Enter country" />
-          <button onClick={this.handleSubmit}>Get Details</button>
+          <input className="enterloc" id="city" placeholder="Enter city" />
+          <input
+            className="enterloc"
+            id="country"
+            placeholder="Enter country"
+          />
+          <button class="btn btn-success" onClick={this.handleSubmit}>
+            Get Details
+          </button>
         </form>
-        {this.state.city &&
-          this.flag &&
-          dataForTrack.map(i => {
-            return <DataTracker values={i.key} type={i.type} />;
-          })}
+        <div className="forecast">
+          {this.state.city &&
+            this.flag &&
+            dataForTrack.map(i => {
+              return <DataTracker key={i.key} values={i.key} type={i.type} />;
+            })}
+        </div>
       </div>
     );
   }
