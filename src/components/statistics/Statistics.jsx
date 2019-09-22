@@ -17,8 +17,47 @@ class Statistics extends Component {
     this.flag = false;
   }
 
-  weatherDataFormatter = data => {
+  getInitState = () => {
+    return {
+      city: this.state.city,
+      country: this.state.country,
+      dayTemp: [],
+      nightTemp: [],
+      morningTemp: [],
+      humidity: []
+    };
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    this.flag = false;
     const state = { ...this.state };
+    state.city = document.getElementById("city").value;
+    state.country = document.getElementById("country").value;
+    this.setState(state, () => {
+      this.getWeatherData();
+    });
+  };
+
+  getWeatherData = () => {
+    const apiId = "94b2a14e27a66b598de4cd629dbfadab";
+    const url =
+      "https://api.openweathermap.org/data/2.5/forecast?q=" +
+      this.state.city +
+      "," +
+      this.state.country +
+      "&APPID=" +
+      apiId;
+    fetch(url)
+      .then(res => res.json())
+      .then(result => {
+        this.flag = true;
+        this.weatherDataFormatter(result["list"]);
+      });
+  };
+
+  weatherDataFormatter = data => {
+    const state = this.getInitState();
     for (let obj of data) {
       const time = this.timeExtractor(obj["dt_txt"]);
       const data = obj["main"];
@@ -36,34 +75,6 @@ class Statistics extends Component {
     return date.split(" ")[1].split(":")[0];
   };
 
-  handleSubmit = event => {
-    event.preventDefault();
-    const state = { ...this.state };
-    state.city = document.getElementById("city").value;
-    state.country = document.getElementById("country").value;
-    this.setState(state, () => {
-      this.getWeatherData();
-    });
-  };
-
-  getWeatherData = () => {
-    console.log(this.state);
-    debugger;
-    const apiId = "94b2a14e27a66b598de4cd629dbfadab";
-    const url =
-      "https://api.openweathermap.org/data/2.5/forecast?q=" +
-      this.state.city +
-      "," +
-      this.state.country +
-      "&APPID=" +
-      apiId;
-    fetch(url)
-      .then(res => res.json())
-      .then(result => {
-        this.flag = true;
-        this.weatherDataFormatter(result["list"]);
-      });
-  };
   render() {
     const dataForTrack = [
       { key: this.state.dayTemp, type: "Day Temperature" },
