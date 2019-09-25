@@ -1,0 +1,13 @@
+version: "3.2"
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+      # One-way volume to use node_modules from inside image
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: npm start

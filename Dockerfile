@@ -1,16 +1,17 @@
-# base image
-FROM node:12.2.0-alpine
+# Use an official node runtime as a parent image
+FROM node:8
 
-# set working directory
-WORKDIR /app
+WORKDIR /app/
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+# Install dependencies
+COPY package.json /app/
 
-# install and cache app dependencies
-COPY package.json /app/package.json
 RUN npm install
 RUN npm install react-scripts@3.0.1 -g --silent
 
-# start app
-CMD ["npm", "start"]
+# Add rest of the client code
+COPY . /app/
+
+EXPOSE 3000
+
+# CMD npm start
